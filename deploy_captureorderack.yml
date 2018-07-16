@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: captureorderack
+spec:
+  replicas: 3
+  minReadySeconds: 10
+  selector:
+    matchLabels:
+      app: captureorderack-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: captureorderack-app
+        env: prod
+    spec:
+      containers:
+      - name: captureorderack-pod
+        image: shanepeckham/captureorderack:v9
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MONGOHOST
+          value: "mongodb://k8steamdb-mongodb.default.svc.cluster.local"
+        - name: TEAMNAME
+          value: "team3"
+        - name: RABBITMQHOST
+          value: "amqp://guest:guest@k8steam3rab-rabbitmq.default.svc.cluster.local:5672"
