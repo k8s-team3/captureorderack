@@ -3,21 +3,22 @@ kind: Deployment
 metadata:
   name: captureorderack
 spec:
-  replicas: 3
-  minReadySeconds: 10
+  replicas: 64
+  minReadySeconds: 2
   selector:
     matchLabels:
       app: captureorderack-app
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 1
+      maxUnavailable: 2
+      maxSurge: 2
   template:
     metadata:
       labels:
         app: captureorderack-app
         env: prod
+        version: v1
     spec:
       containers:
       - name: captureorderack-pod
@@ -26,8 +27,12 @@ spec:
         - containerPort: 8080
         env:
         - name: MONGOHOST
-          value: "mongodb://k8steamdb-mongodb.default.svc.cluster.local"
+          value: "mongodb://k8steamdbcos:klAAGPYQ04xBa4LITNukDVSK4b1CFBN77JHWKsiEIaUcxEk4ZtI93lpEZrvXdI3VDEOzFTcObUmvhKTKloVVXA==@k8steamdbcos.documents.azure.com:10255/?ssl=true&replicaSet=globaldb"
         - name: TEAMNAME
           value: "team3"
-        - name: RABBITMQHOST
-          value: "amqp://guest:guest@k8steam3rab-rabbitmq.default.svc.cluster.local:5672"
+        - name: EVENTURL
+          value: "https://k8steameventhub.servicebus.windows.net/k8steameventhub1"
+        - name: EVENTPOLICYNAME
+          value: "RootManageSharedAccessKey"
+        - name: EVENTPOLICYKEY
+          value: "wXpA3PMqDvUWEmJQQXwwk+x+4duokxRJObC0Mmg6rIg="
